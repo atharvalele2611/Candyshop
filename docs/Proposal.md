@@ -13,10 +13,6 @@ these components. Candyshop can be deployed as infrastructure-as-a-service on
 public and private clouds.
 
 ## Additional Details
-
-- One or more typical “use cases”. These might include “storyboards” explaining
-  how a user would interact with the program or some interesting “input/output”
-  examples.
   
 - A sketch of intended components (key functions, key data structures, separate
   modules).
@@ -47,16 +43,3 @@ public and private clouds.
     intended and pass test cases.
   - At its bare minimum, it is also expected that these candies(components) work
     harmoniously as building blocks for the said infrastucture.
-
-
-<!-- - Thoughts on a “minimal viable product” and “stretch goals”. Be sure to review
-  the final project grading rubric and consider organizing the project around a
-  core deliverable that will almost certainly be achieved and then a number of
-  extensions and features that could be added to ensure that project is of
-  suitable size/scope/effort.
-   - Snickers used for storage of data sent from client. Mars listens for any real-time change in our Snickers data store
-      and replicates it in any another instance of Snicker.
-   - Clients who wish to have a dedicated storage can use Sugarcubes API to reserve a place in the data reserve.
-   - Twix is an alarming service which listens for any trigger events for instance low on RAM, low on Storage space to  alert the user to take an action.
-   - Hersheys, logging service to log any important events say- we entered a new data in Snickers, this is important for debugging in case anytime wrong happens. If the server crashers, the user can see Hersheys logs to troubleshoot the issue.
-   - M&M is an authentication-as-a-service. -->
