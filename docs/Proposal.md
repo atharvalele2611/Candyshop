@@ -20,10 +20,10 @@ public and private clouds.
   
 - A sketch of intended components (key functions, key data structures, separate
   modules).
-  - Snickers - A in-memory database data store or a database which also
+  - Snickers - In-memory database data store or a database which also
               provides persitance option.
   - Sugarcubes - Block storage service for the cloud
-  - Mars - A real-time event streaming service/data replicator
+  - Mars - Real-time event streaming service/data replicator
   - Candycane - Messaging Service
   - Twix - Monitoring and alarming service
   - Hersheys - Logging service
