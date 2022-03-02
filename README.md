@@ -2,6 +2,6 @@
 
 Team members:
 
-- Name1
-- Name2
-- Name3
+- Tanishq Jain <tj3989@g.rit.edu>
+- Atharva Lele <al8523@g.rit.edu>
+- Vaidehi Kalra <vk5548@g.rit.edu>
