@@ -24,7 +24,7 @@ public and private clouds.
   - M&M - Authentication as a service
   - Truffles - (stretch goal) MapReduce
   - Candycane - (stretch goal) Messaging Service
-  - Harsheys - (stretch goal) Load balancer
+  - Hersheys - (stretch goal) Load balancer
   - Reese - (stretch goal) Dashboard
   - After8 - (stretch goal)
 
