@@ -23,7 +23,7 @@ public and private clouds.
   - Hersheys - Logging service
   - M&M - Authentication as a service
   - Truffles - (stretch goal) Map Reduce
-  - Candycane -(stretch goal) Messaging Service
+  - Candycane - (stretch goal) Messaging Service
   - Skittles - (stretch goal) Load balancer
   - Reese - (stretch goal) Dashboard
   - After8 - (stretch goal) [If time permits]
