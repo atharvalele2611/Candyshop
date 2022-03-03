@@ -23,12 +23,11 @@ public and private clouds.
   - Twix - Monitoring and alarming service
   - Hersheys - Logging service
   - M&M - Authentication as a service
-
+  - Truffles - (stretch goal) Map Reduce
   - Candycane -(stretch goal) Messaging Service
   - Skittles - (stretch goal) Load balancer
-  - Truffles - (stretch goal) Map Reduce
   - Reese - (stretch goal) Dashboard
-  - After8 - (stretch goal) [As per future requirements]
+  - After8 - (stretch goal) [If time permits]
 
 - Stretch goals:
   - Some components can not be implemented in the provided timeframe because of
@@ -42,9 +41,13 @@ public and private clouds.
   - At its bare minimum, it is also expected that these candies(components) work
     harmoniously as building blocks for the said infrastucture.
 
-## Use Case
-  Based on User requirements like:  
-    - *"I want to replicate my data"* - Mars and Sugarcubes/Snickers  
-    - *"I want to monitor the state of my server"* - Twix  
-    - *"I want to allocate storage for my users"* - Sugarcubes  
-    - *"I want to authenticate incoming requests"* - M&M  
+## Use Cases
+  - *"I want to replicate my data"* - Mars and Sugarcubes/Snickers  
+  - *"I want to monitor the state of my server"* - Twix  
+  - *"I want to allocate storage for my users"* - Sugarcubes  
+  - *"I want to authenticate incoming requests"* - M&M  
+
+## Testing
+  - Pulling off unit tests for all the components should be relatively easy
+    but as the components start coming together, eventually a complete E2E
+    testing suite will be necessary
