@@ -43,8 +43,8 @@ public and private clouds.
     harmoniously as building blocks for the said infrastucture.
 
 ## Use Case
-  Based on User requirements like:
-    - *"I want to replicate my data"* - Mars and Sugarcubes/Snickers
-    - *"I want to monitor the state of my server"* - Twix
-    - *"I want to allocate storage for my users"* - Sugarcubes
-    - *"I want to authenticate incoming requests"* - M&M
+  Based on User requirements like:  
+    - *"I want to replicate my data"* - Mars and Sugarcubes/Snickers  
+    - *"I want to monitor the state of my server"* - Twix  
+    - *"I want to allocate storage for my users"* - Sugarcubes  
+    - *"I want to authenticate incoming requests"* - M&M  
