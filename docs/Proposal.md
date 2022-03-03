@@ -14,8 +14,7 @@ public and private clouds.
 
 ## Additional Details
   
-- A sketch of intended components (key functions, key data structures, separate
-  modules).
+- Components:
   - Snickers - In-memory database data store or a database which also
                provides persitance option.
   - Sugarcubes - Block storage service for the cloud
