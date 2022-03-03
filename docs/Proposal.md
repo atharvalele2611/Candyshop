@@ -17,20 +17,18 @@ public and private clouds.
 - A sketch of intended components (key functions, key data structures, separate
   modules).
   - Snickers - In-memory database data store or a database which also
-              provides persitance option.
+               provides persitance option.
   - Sugarcubes - Block storage service for the cloud
-  - Mars - Real-time event streaming service/data replicator
-  - Candycane - Messaging Service
+  - Mars - Real-time event streaming service
   - Twix - Monitoring and alarming service
   - Hersheys - Logging service
   - M&M - Authentication as a service
+
+  - Candycane -(stretch goal) Messaging Service
   - Skittles - (stretch goal) Load balancer
   - Truffles - (stretch goal) Map Reduce
   - Reese - (stretch goal) Dashboard
-  - After8 - (stretch goal)
-  - Gummybears - (stretch goal)
-  - Bounty - (stretch goal)
-  - KitKat - (stretch goal)
+  - After8 - (stretch goal) [As per future requirements]
 
 - Stretch goals:
   - Some components can not be implemented in the provided timeframe because of
@@ -43,3 +41,10 @@ public and private clouds.
     intended and pass test cases.
   - At its bare minimum, it is also expected that these candies(components) work
     harmoniously as building blocks for the said infrastucture.
+
+## Use Case
+  Based on User requirements like:
+    - *"I want to replicate my data"* - Mars and Sugarcubes/Snickers
+    - *"I want to monitor the state of my server"* - Twix
+    - *"I want to allocate storage for my users"* - Sugarcubes
+    - *"I want to authenticate incoming requests"* - M&M
