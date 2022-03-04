@@ -1,0 +1,14 @@
+Good proposal.
+
+Project seems a little ambitious, but is nicely decomposed into many individual
+components.
+
+I'm not familiar with infrastructure-as-a-service components.  It seems likely,
+but be sure that your application is doing enough interesting work (in Rust),
+not simply shuffling requests from a front-end web API through to a back-end
+service.
+
+Think some more about how you will test your application and components.
+
+
+Score: 10/10
