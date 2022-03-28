@@ -11,12 +11,14 @@ type Tx = mpsc::UnboundedSender<(String, Message)>;
 pub struct Mars(Arc<Mutex<HashMap<String, Vec<(Tx, SocketAddr)>>>>);
 
 impl Mars {
+    /// Constructor
     pub fn new() -> Self {
         Self {
             0: Arc::new(Mutex::new(HashMap::new()))
         }
     }
 
+    /// Add subscriber to given topics
     pub async fn add_subscriber(&mut self, s: TcpStream, t: &str) {
         let addr = match s.peer_addr() {
             Ok(s) => s,
@@ -24,11 +26,12 @@ impl Mars {
         };
         
         let (tx, mut rx) = mpsc::unbounded_channel::<(String, Message)>();
-    
+        let topics = t.split(",");
+        
         {
             let mut guard = self.0.lock().await;
 
-            for topic in t.split(",") {
+            for topic in topics {
                 match guard.get_mut(topic) {
                     Some(v) => {
                         let tn = tx.clone();
@@ -53,6 +56,7 @@ impl Mars {
         self.drop_subscriber(t, addr).await;
     }
 
+    /// Drop a subscriber from given topics
     pub async fn drop_subscriber(&mut self, t: &str, s: SocketAddr) {
         match self.0.lock().await.get_mut(t) {
             Some(vt) => {
@@ -73,14 +77,17 @@ impl Mars {
         return;
     }
 
+    /// Add a new topic
     pub async fn add_topic(&mut self, s: &str) {
         self.0.lock().await.insert(s.to_string(), vec![]);
     }
 
+    /// Drop a topic
     pub async fn drop_topic(&mut self, s: &str) {
         self.0.lock().await.remove(s);
     }
 
+    /// Send a message to everyone listening on a particular topic
     pub async fn send_topic_message(&self, s: &str, msg: &[u8]) {
         match self.0.lock().await.get(s) {
             Some(vt) => {
@@ -90,5 +97,30 @@ impl Mars {
             },
             None => ()
         }
+    }
+
+    /// Number of Topics present
+    pub async fn size(&self) -> usize {
+        self.0.lock().await.len()
+    }
+
+    /// Number of receivers for a topic
+    pub async fn topic_size(&self, t: &str) -> usize {
+        let mut cnt = 0;
+
+        let topics = t.split(",");
+
+        {
+            let guard = self.0.lock().await;
+            
+            for topic in topics {
+                match guard.get(topic) {
+                    Some(v) => cnt += v.len(),
+                    None => {}
+                }
+            }
+        }
+    
+        cnt
     }
 }
