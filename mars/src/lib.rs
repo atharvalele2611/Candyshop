@@ -6,7 +6,7 @@ use tokio::net::{TcpStream};
 use tokio::sync::{mpsc, Mutex};
 
 type Message = Vec<u8>;
-type Tx = mpsc::UnboundedSender<(String, Message)>; // per stream
+type Tx = mpsc::UnboundedSender<(String, Message)>;
 
 pub struct Mars(Arc<Mutex<HashMap<String, Vec<(Tx, SocketAddr)>>>>);
 
