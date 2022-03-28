@@ -59,20 +59,27 @@ impl Mars {
 
     /// Drop a subscriber from given topics
     pub async fn drop_subscriber(&mut self, t: &str, s: SocketAddr) {
-        match self.0.lock().await.get_mut(t) {
-            Some(vt) => {
-                let mut i = 0;
+        let topics = t.split(",");
 
-                for e in vt.iter() {
-                    if e.1 == s {
-                        break;
+        let mut guard = self.0.lock().await;
+
+        for topic in topics {
+            match guard.get_mut(topic) {
+                Some(vt) => {
+                    let mut i = 0;
+
+                    for e in vt.iter() {
+                        if e.1 == s {
+                            break;
+                        }
+
+                        i += 1;
                     }
-                    i += 1;
-                }
 
-                vt.swap_remove(i);
-            },
-            _ => (),
+                    vt.swap_remove(i);
+                },
+                _ => ()
+            }
         }
 
         return;
