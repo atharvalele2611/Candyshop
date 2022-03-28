@@ -8,6 +8,7 @@ use tokio::sync::{mpsc, Mutex};
 type Message = Vec<u8>;
 type Tx = mpsc::UnboundedSender<(String, Message)>;
 
+/// Pub/Sub
 pub struct Mars(Arc<Mutex<HashMap<String, Vec<(Tx, SocketAddr)>>>>);
 
 impl Mars {
@@ -18,7 +19,7 @@ impl Mars {
         }
     }
 
-    /// Add subscriber to given topics
+    /// Add subscriber to given topics(comma separated)
     pub async fn add_subscriber(&mut self, s: TcpStream, t: &str) {
         let addr = match s.peer_addr() {
             Ok(s) => s,
@@ -77,17 +78,27 @@ impl Mars {
         return;
     }
 
-    /// Add a new topic
+    /// Add new topics(comma separated)
     pub async fn add_topic(&mut self, s: &str) {
-        self.0.lock().await.insert(s.to_string(), vec![]);
+        let topics = s.split(",").map(|x| x.to_string());
+
+        let mut guard = self.0.lock().await;
+        for topic in topics {
+            guard.insert(topic, vec![]);
+        }
     }
 
-    /// Drop a topic
+    /// Drop topics(comma separated)
     pub async fn drop_topic(&mut self, s: &str) {
-        self.0.lock().await.remove(s);
+        let topics = s.split(",").map(|x| x.to_string());
+
+        let mut guard = self.0.lock().await;
+        for topic in topics {
+            guard.remove(&topic);
+        }
     }
 
-    /// Send a message to everyone listening on a particular topic
+    /// Send a message to everyone listening on a particular topic(single topic)
     pub async fn send_topic_message(&self, s: &str, msg: &[u8]) {
         match self.0.lock().await.get(s) {
             Some(vt) => {
