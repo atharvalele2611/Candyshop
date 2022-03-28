@@ -1,10 +1,10 @@
 [package]
-name = "twix"
+name = "mars"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sysinfo = "0.23"
-lazy_static = "1.4.0"
+tokio = { version = "1.17.0", features = ["net", "sync", "rt", "macros"] }
+bytes = { version = "1.1.0", features = ["serde"] }
