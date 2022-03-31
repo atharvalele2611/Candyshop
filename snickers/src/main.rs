@@ -1,5 +1,5 @@
 pub mod database;
-pub mod redis_commands;
+pub mod snickers_commands;
 
 use std::{collections::HashMap, str::FromStr};
 
@@ -46,7 +46,7 @@ async fn main() {
                     let command = input[0];
                     let database_key = input[1];
                     let values = &input[2..];
-                    let cmd = redis_commands::lookup(command);
+                    let cmd = snickers_commands::lookup(command);
                     match cmd {
                         Some(cmd) => {
                             let res = cmd.execute(&mut db, database_key, values);

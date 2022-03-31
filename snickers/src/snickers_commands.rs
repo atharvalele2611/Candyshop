@@ -8,12 +8,12 @@ mod server;
 mod sets;
 mod strings;
 
-pub struct RedisCommand<'a> {
+pub struct SnickersCommand<'a> {
     pub name: &'a str,
     pub handler: RedisCommandProc,
 }
 
-impl RedisCommand<'_> {
+impl SnickersCommand<'_> {
     pub fn execute(
         &self,
         db: &mut Database,
@@ -24,149 +24,149 @@ impl RedisCommand<'_> {
     }
 }
 
-static COMMANDS: &[RedisCommand] = &[
-    // RedisCommand {
+static COMMANDS: &[SnickersCommand] = &[
+    // SnickersCommand {
     //     name: b"get",
     //     handler: strings::get_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"set",
     //     handler: strings::set_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"mget",
     //     handler: strings::mget_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"mset",
     //     handler: strings::mset_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"del",
     //     handler: keyspace::del_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"exists",
     //     handler: keyspace::exists_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"expire",
     //     handler: keyspace::expire_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"persist",
     //     handler: keyspace::persist_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"ttl",
     //     handler: keyspace::ttl_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"incr",
     //     handler: strings::incr_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"decr",
     //     handler: strings::decr_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"incrby",
     //     handler: strings::incrby_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"decrby",
     //     handler: strings::decrby_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"rpush",
     //     handler: lists::rpush_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lpush",
     //     handler: lists::lpush_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"linsert",
     //     handler: lists::linsert_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"rpop",
     //     handler: lists::rpop_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lpop",
     //     handler: lists::lpop_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"llen",
     //     handler: lists::llen_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lindex",
     //     handler: lists::lindex_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lset",
     //     handler: lists::lset_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lrange",
     //     handler: lists::lrange_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"ltrim",
     //     handler: lists::ltrim_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"lrem",
     //     handler: lists::lrem_command,
     // },
-    RedisCommand {
+    SnickersCommand {
         name: "hset",
         handler: hash::hset_command,
     },
-    RedisCommand {
+    SnickersCommand {
         name: "hget",
         handler: hash::hget_command,
     },
-    RedisCommand {
+    SnickersCommand {
         name: "hmset",
         handler: hash::hmset_command,
     },
-    RedisCommand {
+    SnickersCommand {
         name: "hmget",
         handler: hash::hmget_command,
     },
-    RedisCommand {
+    SnickersCommand {
         name: "hgetall",
         handler: hash::hgetall_command,
     },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"command",
     //     handler: server::command_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"debug",
     //     handler: server::debug_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"flushdb",
     //     handler: server::flushdb_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"keys",
     //     handler: keyspace::keys_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"type",
     //     handler: keyspace::type_command,
     // },
-    // RedisCommand {
+    // SnickersCommand {
     //     name: b"object",
     //     handler: keyspace::object_command,
     // },
 ];
 
-pub fn lookup(name: &str) -> Option<&RedisCommand> {
+pub fn lookup(name: &str) -> Option<&SnickersCommand> {
     COMMANDS.iter().find(|c| name.eq_ignore_ascii_case(c.name))
 }
