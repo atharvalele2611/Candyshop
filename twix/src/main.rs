@@ -2,6 +2,7 @@
 
 mod rules;
 
+use std::sync::Arc;
 use std::io::{self, Error, ErrorKind};
 use std::os::unix::thread;
 use std::time::Duration;
@@ -11,12 +12,15 @@ use mars::Mars;
 use clap::Parser;
 use sysinfo::{System, SystemExt, ProcessorExt, NetworkExt};
 use tokio::net::TcpStream;
+use tokio::sync::{Mutex, MutexGuard};
+
+use crate::rules::Rules;
 
 #[derive(Parser, Debug)]
 #[clap(name="Twix", version = "1.0")]
 struct Args {
     #[clap(short, long)]
-    interval: i32,
+    interval: u64,
 
     #[clap(short, long)]
     port: u16,
@@ -30,17 +34,17 @@ struct Args {
     #[clap(long, default_value_t = 99.9)]
     memory: f32,
 
-    #[clap(long, default_value_t = 99.9)]
-    network: f32
+    #[clap(long, default_value_t = 10240)]
+    network: usize
 }
 
 #[tokio::main(flavor = "current_thread")] // single threaded
 async fn main() -> std::io::Result<()> {
     let args = Args::parse();
 
-    let mut mars = Mars::new();
+    let mut mars = Arc::new(Mutex::new(Mars::new()));
 
-    mars.add_topic("ram,memory,network");
+    mars.lock().await.add_topic("ram,memory,network");
 
     let system = tokio::spawn(async move {
         use tokio::net::TcpListener;
@@ -50,61 +54,55 @@ async fn main() -> std::io::Result<()> {
 
         loop {
             let (mut socket, _addr) = listener.accept().await.expect("Error while accepting socket");
+            {
+                let guard = mars.lock().await;
 
-            process(&mut mars, socket).await;
+                process(guard, socket).await;    
+            }
+            
         }
     });
 
     let req = tokio::spawn(async move {
+        let mut s = System::new();
+        let mut r = Rules::new(args.ram, args.memory, args.network);
         loop {
-            std::thread::sleep(Duration::new(args.interval as u64, 0));
+            s.refresh_cpu();
+            s.refresh_memory();
+            s.refresh_networks();
+
+            let ram = s.available_memory();
+            let mut network = 0;
+            s.networks().into_iter().map(|f| network += f.1.transmitted());
+
+            let (b1, b2, b3) = r.check(0.0, ram as f32, network as usize);
+
+            {
+                let mars = mars.lock().await;
+
+                if b1 {
+                    mars.send_topic_message("ram", b"Limit Crossed");
+                }
+
+                if b2 {
+                    mars.send_topic_message("memory", b"Limit Crossed");
+                }
+
+                if b3 {
+                    mars.send_topic_message("network", b"Limit Crossed");
+                }
+            }
+
+            tokio::time::sleep(Duration::new(args.interval, 0)).await;
         }
     });
 
     tokio::join!(system, req);
 
     Ok(())
-
-    // let mut s = System::new();
-
-    // loop {
-    //     s.refresh_networks();
-    //     s.refresh_components();
-    //     s.refresh_components_list();
-    //     s.refresh_cpu();
-    //     s.refresh_networks();
-    //     s.refresh_networks_list();
-
-    //     println!("--------------------------");
-    //     println!("free_memory {:?}", (s.free_memory() as f64) / 1000000.00);
-    //     println!("used_memory {:?}", (s.used_memory() as f64) / 1000000.00);
-    //     println!(
-    //         "available_memory {:?}",
-    //         (s.available_memory() as f64) / 1000000.00
-    //     );
-
-    //     println!("processors {:?}", s.processors());
-    //     for p in s.processors() {
-    //         println!("processors {:?}", p.cpu_usage());
-    //     }
-
-    //     let networks = s.networks();
-    //     for (interface_name, data) in networks {
-    //         // println!("{:?}", data);
-    //         println!(
-    //             "[{}] in: {}, out: {}",
-    //             interface_name,
-    //             data.received(),
-    //             data.transmitted(),
-    //         );
-    //     }
-    //     println!("==========================");
-    //     std::thread::sleep(Duration::new(4, 0));
-    // }
 }
 
-
-async fn process(mars: &mut Mars, s: TcpStream) -> io::Result<()> {
+async fn process(mut mars: MutexGuard<'_, Mars>, s: TcpStream) -> io::Result<()> {
     s.readable().await?;
 
     let mut buffer = [0_u8; 512];

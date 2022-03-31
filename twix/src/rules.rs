@@ -2,11 +2,11 @@
 pub(crate) struct Rules {
 	ram: f32,
 	mem: f32,
-	network: f32,
+	network: usize,
 }
 
 impl Rules {
-	pub(crate) fn new(ram: f32, mem: f32, network: f32) -> Self {
+	pub(crate) fn new(ram: f32, mem: f32, network: usize) -> Self {
 		Self { ram, mem, network }
 	}
 
@@ -18,11 +18,11 @@ impl Rules {
 		self.mem < mem
 	}
 
-	pub(crate) fn check_network(&self, network: f32) -> bool {
+	pub(crate) fn check_network(&self, network: usize) -> bool {
 		self.network < network
 	}
 
-	pub(crate) fn check(&self, ram: f32, mem: f32, network: f32) -> (bool, bool, bool) {
+	pub(crate) fn check(&self, ram: f32, mem: f32, network: usize) -> (bool, bool, bool) {
 		(self.check_ram(ram), self.check_mem(mem), self.check_network(network))
 	}
 }

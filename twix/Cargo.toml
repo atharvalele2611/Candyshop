@@ -11,4 +11,4 @@ path = "../mars"
 [dependencies]
 sysinfo = "0.23"
 clap = { version = "3.1.6", features = ["derive"] }
-tokio = { version = "1.17.0", features = ["net", "rt", "macros"] }
+tokio = { version = "1.17.0", features = ["net", "rt", "macros", "time"] }
