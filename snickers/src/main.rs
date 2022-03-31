@@ -21,7 +21,6 @@ hmget constructors p1 p2 p3 p4
 
 #[tokio::main]
 async fn main() {
-    println!("Hello, world!");
     let listener = TcpListener::bind("localhost:8080").await.unwrap();
     // to allow multiple clients conncet to server
 
@@ -43,22 +42,25 @@ async fn main() {
                 for arg in line.split_ascii_whitespace() {
                     input.push(arg);
                 }
-                let command = input[0];
-                let database_key = input[1];
-                let values = &input[2..];
-                println!("command {:?} db {:?} ", command, database_key);
-                println!("values {:?}", values);
+                if !input.is_empty() && input.len() >= 2 {
+                    let command = input[0];
+                    let database_key = input[1];
+                    let values = &input[2..];
+                    let cmd = redis_commands::lookup(command);
+                    match cmd {
+                        Some(cmd) => {
+                            let res = cmd.execute(&mut db, database_key, values);
 
-                let cmd = redis_commands::lookup(command);
-                match cmd {
-                    Some(cmd) => {
-                        let res = cmd.execute(&mut db, database_key, values);
-                        println!("{:?}", res);
-                        //write res in writer
+                            if res.is_ok() {
+                                writer.write_all(res.unwrap().as_bytes()).await.unwrap();
+                            } else {
+                                writer.write_all(res.unwrap_err().as_bytes()).await.unwrap();
+                            }
+                        }
+                        None => (),
                     }
-                    None => (),
                 }
-                // writer.write_all(line.as_bytes()).await.unwrap();
+
                 line.clear();
             }
         });

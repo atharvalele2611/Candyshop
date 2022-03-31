@@ -1,11 +1,11 @@
 use crate::database::Database;
 type RedisCommandProc = fn(db: &mut Database, dk: &str, req: &[&str]) -> Result<String, String>;
 
-mod hash_map;
-mod hash_set;
+mod hash;
 mod keyspace;
 mod lists;
 mod server;
+mod sets;
 mod strings;
 
 pub struct RedisCommand<'a> {
@@ -121,25 +121,25 @@ static COMMANDS: &[RedisCommand] = &[
     //     name: b"lrem",
     //     handler: lists::lrem_command,
     // },
-    // RedisCommand {
-    //     name: b"hset",
-    //     handler: hash_set::hset_command,
-    // },
-    // RedisCommand {
-    //     name: b"hget",
-    //     handler: hash_set::hget_command,
-    // },
+    RedisCommand {
+        name: "hset",
+        handler: hash::hset_command,
+    },
+    RedisCommand {
+        name: "hget",
+        handler: hash::hget_command,
+    },
     RedisCommand {
         name: "hmset",
-        handler: hash_map::hmset_command,
+        handler: hash::hmset_command,
     },
     RedisCommand {
         name: "hmget",
-        handler: hash_map::hmget_command,
+        handler: hash::hmget_command,
     },
     RedisCommand {
         name: "hgetall",
-        handler: hash_map::hgetall_command,
+        handler: hash::hgetall_command,
     },
     // RedisCommand {
     //     name: b"command",
