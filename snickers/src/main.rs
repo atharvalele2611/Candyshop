@@ -11,7 +11,25 @@ use tokio::{
 
 use crate::database::Database;
 
-use skittles::{self, log};
+// use skittles::{self, log};
+#[derive(Parser, Debug)]
+#[clap(name = "Snickers", version = "1.0")]
+struct Args {
+    #[clap(long, default_value_t = 8080)]
+    port: i32,
+
+    #[clap(short, default_value = "localhost")]
+    hostname: String,
+}
+
+#[tokio::main]
+async fn main() {
+    let args = Args::parse();
+    let hostname = args.hostname;
+    let port = args.port.to_string();
+    let listener = TcpListener::bind(format!("{}:{}", hostname, port))
+        .await
+        .unwrap();
 
 #[tokio::main]
 async fn main() {
