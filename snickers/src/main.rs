@@ -3,6 +3,7 @@ pub mod snickers_commands;
 
 use std::sync::Arc;
 
+use clap::Parser;
 use tokio::{
     io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
     net::TcpListener,
@@ -31,22 +32,18 @@ async fn main() {
         .await
         .unwrap();
 
-#[tokio::main]
-async fn main() {
-    let listener = TcpListener::bind("localhost:8080").await.unwrap();
-
     // tokio::spawn(log(listener1));
     // to allow multiple clients conncet to server
     loop {
-        let (socket, _addr) = listener.accept().await.unwrap();
-        let socket1 = Arc::new(RwLock::new(socket));
-        let sc = Arc::clone(&socket1);
-        tokio::spawn(log(sc));
+        let (mut socket, _addr) = listener.accept().await.unwrap();
+        // let socket1 = Arc::new(RwLock::new(socket));
+        // let sc = Arc::clone(&socket1);
+        // tokio::spawn(log(sc));
         let mut db = Database::new();
 
         tokio::spawn(async move {
-            let mut socket1 = socket1.write().await;
-            let (read, mut writer) = socket1.split();
+            // let mut socket1 = socket1.write().await;
+            let (read, mut writer) = socket.split();
             let mut reader = BufReader::new(read);
             loop {
                 let mut line = String::new();
@@ -73,11 +70,14 @@ async fn main() {
                                 writer.write_all(res.unwrap_err().as_bytes()).await.unwrap();
                             }
                         }
-                        None => (),
+                        None => {
+                            let response = String::from("UNKNOWN COMMAND\n");
+                            writer.write_all(response.as_bytes()).await.unwrap();
+                        }
                     }
                 }
 
-                // line.clear();
+                line.clear();
             }
         });
     }
