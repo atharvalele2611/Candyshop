@@ -77,46 +77,46 @@ static COMMANDS: &[SnickersCommand] = &[
     //     name: b"decrby",
     //     handler: strings::decrby_command,
     // },
-    // SnickersCommand {
-    //     name: b"rpush",
-    //     handler: lists::rpush_command,
-    // },
-    // SnickersCommand {
-    //     name: b"lpush",
-    //     handler: lists::lpush_command,
-    // },
+    SnickersCommand {
+        name: "rpush",
+        handler: lists::rpush_command,
+    },
+    SnickersCommand {
+        name: "lpush",
+        handler: lists::lpush_command,
+    },
     // SnickersCommand {
     //     name: b"linsert",
     //     handler: lists::linsert_command,
     // },
-    // SnickersCommand {
-    //     name: b"rpop",
-    //     handler: lists::rpop_command,
-    // },
-    // SnickersCommand {
-    //     name: b"lpop",
-    //     handler: lists::lpop_command,
-    // },
-    // SnickersCommand {
-    //     name: b"llen",
-    //     handler: lists::llen_command,
-    // },
-    // SnickersCommand {
-    //     name: b"lindex",
-    //     handler: lists::lindex_command,
-    // },
-    // SnickersCommand {
-    //     name: b"lset",
-    //     handler: lists::lset_command,
-    // },
-    // SnickersCommand {
-    //     name: b"lrange",
-    //     handler: lists::lrange_command,
-    // },
-    // SnickersCommand {
-    //     name: b"ltrim",
-    //     handler: lists::ltrim_command,
-    // },
+    SnickersCommand {
+        name: "rpop",
+        handler: lists::rpop_command,
+    },
+    SnickersCommand {
+        name: "lpop",
+        handler: lists::lpop_command,
+    },
+    SnickersCommand {
+        name: "llen",
+        handler: lists::llen_command,
+    },
+    SnickersCommand {
+        name: "lindex",
+        handler: lists::lindex_command,
+    },
+    SnickersCommand {
+        name: "lset",
+        handler: lists::lset_command,
+    },
+    SnickersCommand {
+        name: "lrange",
+        handler: lists::lrange_command,
+    },
+    SnickersCommand {
+        name: "ltrim",
+        handler: lists::ltrim_command,
+    },
     // SnickersCommand {
     //     name: b"lrem",
     //     handler: lists::lrem_command,
