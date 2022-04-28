@@ -7,6 +7,7 @@ mod lists;
 mod server;
 mod sets;
 mod strings;
+mod trie;
 
 pub struct SnickersCommand<'a> {
     pub name: &'a str,
@@ -26,11 +27,11 @@ impl SnickersCommand<'_> {
 
 static COMMANDS: &[SnickersCommand] = &[
     // SnickersCommand {
-    //     name: b"get",
+    //     name: "get",
     //     handler: strings::get_command,
     // },
     // SnickersCommand {
-    //     name: b"set",
+    //     name: "set",
     //     handler: strings::set_command,
     // },
     // SnickersCommand {
@@ -85,10 +86,6 @@ static COMMANDS: &[SnickersCommand] = &[
         name: "lpush",
         handler: lists::lpush_command,
     },
-    // SnickersCommand {
-    //     name: b"linsert",
-    //     handler: lists::linsert_command,
-    // },
     SnickersCommand {
         name: "rpop",
         handler: lists::rpop_command,
@@ -117,10 +114,6 @@ static COMMANDS: &[SnickersCommand] = &[
         name: "ltrim",
         handler: lists::ltrim_command,
     },
-    // SnickersCommand {
-    //     name: b"lrem",
-    //     handler: lists::lrem_command,
-    // },
     SnickersCommand {
         name: "hset",
         handler: hash::hset_command,
@@ -141,6 +134,18 @@ static COMMANDS: &[SnickersCommand] = &[
         name: "hgetall",
         handler: hash::hgetall_command,
     },
+    SnickersCommand {
+        name: "tinsert",
+        handler: trie::tinsert_command,
+    },
+    SnickersCommand {
+        name: "tremove",
+        handler: trie::tremove_command,
+    },
+    SnickersCommand {
+        name: "tgetall",
+        handler: trie::tgetall_command,
+    },
     // SnickersCommand {
     //     name: b"command",
     //     handler: server::command_command,
@@ -149,14 +154,10 @@ static COMMANDS: &[SnickersCommand] = &[
     //     name: b"debug",
     //     handler: server::debug_command,
     // },
-    // SnickersCommand {
-    //     name: b"flushdb",
-    //     handler: server::flushdb_command,
-    // },
-    // SnickersCommand {
-    //     name: b"keys",
-    //     handler: keyspace::keys_command,
-    // },
+    SnickersCommand {
+        name: "flushdb",
+        handler: server::flushdb_command,
+    },
     // SnickersCommand {
     //     name: b"type",
     //     handler: keyspace::type_command,

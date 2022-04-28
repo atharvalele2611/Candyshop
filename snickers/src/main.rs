@@ -1,37 +1,35 @@
 pub mod database;
 pub mod snickers_commands;
 
-use std::{collections::HashMap, str::FromStr};
+use std::sync::Arc;
 
 use tokio::{
-    io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader},
+    io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
     net::TcpListener,
+    sync::{Mutex, RwLock},
 };
 
 use crate::database::Database;
 
-// tests
-/*
-hmset drivers p1 Verstappen p2 Leclerc p3 Sainz p4 Perez
-hmget drivers p1 p2 p3 p4
-
-hmset constructors p1 Ferrari p2 Mercedes p3 Redbull p4 Alpine
-hmget constructors p1 p2 p3 p4
-*/
+use skittles::{self, log};
 
 #[tokio::main]
 async fn main() {
     let listener = TcpListener::bind("localhost:8080").await.unwrap();
+
+    // tokio::spawn(log(listener1));
     // to allow multiple clients conncet to server
-
     loop {
-        let (mut socket, _addr) = listener.accept().await.unwrap();
+        let (socket, _addr) = listener.accept().await.unwrap();
+        let socket1 = Arc::new(RwLock::new(socket));
+        let sc = Arc::clone(&socket1);
+        tokio::spawn(log(sc));
         let mut db = Database::new();
+
         tokio::spawn(async move {
-            let (read, mut writer) = socket.split();
-
+            let mut socket1 = socket1.write().await;
+            let (read, mut writer) = socket1.split();
             let mut reader = BufReader::new(read);
-
             loop {
                 let mut line = String::new();
                 let bytes_r = reader.read_line(&mut line).await.unwrap();
@@ -61,7 +59,7 @@ async fn main() {
                     }
                 }
 
-                line.clear();
+                // line.clear();
             }
         });
     }
