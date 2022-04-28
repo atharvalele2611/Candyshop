@@ -76,7 +76,6 @@ async fn main() {
                         }
                     }
                 }
-
                 line.clear();
             }
         });
