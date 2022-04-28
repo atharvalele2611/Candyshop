@@ -1,5 +1,5 @@
 use crate::database::Database;
-type RedisCommandProc = fn(db: &mut Database, dk: &str, req: &[&str]) -> Result<String, String>;
+type SnickerCommandProc = fn(db: &mut Database, dk: &str, req: &[&str]) -> Result<String, String>;
 
 mod hash;
 mod keyspace;
@@ -11,7 +11,7 @@ mod trie;
 
 pub struct SnickersCommand<'a> {
     pub name: &'a str,
-    pub handler: RedisCommandProc,
+    pub handler: SnickerCommandProc,
 }
 
 impl SnickersCommand<'_> {
@@ -26,14 +26,14 @@ impl SnickersCommand<'_> {
 }
 
 static COMMANDS: &[SnickersCommand] = &[
-    // SnickersCommand {
-    //     name: "get",
-    //     handler: strings::get_command,
-    // },
-    // SnickersCommand {
-    //     name: "set",
-    //     handler: strings::set_command,
-    // },
+    SnickersCommand {
+        name: "get",
+        handler: strings::get_command,
+    },
+    SnickersCommand {
+        name: "set",
+        handler: strings::set_command,
+    },
     // SnickersCommand {
     //     name: b"mget",
     //     handler: strings::mget_command,
