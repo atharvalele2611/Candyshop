@@ -1,0 +1,23 @@
+Reasonable update and progress.
+
+Seems like some implemention underway.
+
+Good to get experience with async and tokio.
+
+Modularizing each component as a crate seems like a reasonable organization.  Of
+course, there may well be some "private" crates that are used by multiple
+components (rather than duplicating code in each crate).
+
+Continue to think about how you will test your components.
+
+I think that you suggested that there is a standard "infrastructure as a
+service" demo application that you hope to recreate.
+
+Look over the rubric for the final project writeup
+(https://www.cs.rit.edu/~mtf/teaching/20215/psr/project.html#final_project) and
+think about how the features of Rust were used to good effect in the project.
+Also be sure that your final writeup gives a more complete sense of the effort
+and accomplishments of the project.
+
+
+Score: 10/10
