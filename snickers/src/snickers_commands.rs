@@ -146,6 +146,22 @@ static COMMANDS: &[SnickersCommand] = &[
         name: "tgetall",
         handler: trie::tgetall_command,
     },
+    SnickersCommand {
+        name: "sadd",
+        handler: sets::sadd_command,
+    },
+    SnickersCommand {
+        name: "srem",
+        handler: sets::srem_command,
+    },
+    SnickersCommand {
+        name: "scard",
+        handler: sets::scard_command,
+    },
+    SnickersCommand {
+        name: "smembers",
+        handler: sets::smembers_command,
+    },
     // SnickersCommand {
     //     name: b"command",
     //     handler: server::command_command,
