@@ -42,10 +42,11 @@ struct Args {
 async fn main() -> std::io::Result<()> {
     let args = Args::parse();
 
+    let mut mars = Mars::new();
+    mars.add_topic("ram,memory,network");
     let mut mars = Arc::new(Mutex::new(Mars::new()));
 
-    mars.lock().await.add_topic("ram,memory,network");
-
+    let mars_sys = Arc::clone(&mars);
     let system = tokio::spawn(async move {
         use tokio::net::TcpListener;
 
@@ -55,7 +56,7 @@ async fn main() -> std::io::Result<()> {
         loop {
             let (mut socket, _addr) = listener.accept().await.expect("Error while accepting socket");
             {
-                let guard = mars.lock().await;
+                let guard = mars_sys.lock().await;
 
                 process(guard, socket).await;    
             }
@@ -63,6 +64,7 @@ async fn main() -> std::io::Result<()> {
         }
     });
 
+    let mars_req = Arc::clone(&mars);
     let req = tokio::spawn(async move {
         let mut s = System::new();
         let mut r = Rules::new(args.ram, args.memory, args.network);
@@ -78,7 +80,7 @@ async fn main() -> std::io::Result<()> {
             let (b1, b2, b3) = r.check(0.0, ram as f32, network as usize);
 
             {
-                let mars = mars.lock().await;
+                let mars = mars_req.lock().await;
 
                 if b1 {
                     mars.send_topic_message("ram", b"Limit Crossed");
