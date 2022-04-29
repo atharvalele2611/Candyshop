@@ -5,6 +5,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[dependencies.mars]
+path = "../mars"
+
+[dependencies.skittles]
+path = "../skittles"
+
 [dependencies]
 sysinfo = "0.23"
-lazy_static = "1.4.0"
+clap = { version = "3.1.6", features = ["derive"] }
+tokio = { version = "1.17.0", features = ["net", "rt", "macros", "time"] }

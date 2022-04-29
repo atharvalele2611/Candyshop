@@ -2,7 +2,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 use std::collections::HashMap;
 
-use tokio::net::{TcpStream};
+use tokio::net::TcpStream;
 use tokio::sync::{mpsc, Mutex};
 
 type Message = Vec<u8>;
