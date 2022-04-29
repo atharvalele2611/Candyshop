@@ -35,7 +35,7 @@ async fn main() -> io::Result<()> {
                             {
                                 let _ = f.lock().await;
                                 let mut file = OpenOptions::new().create(true).write(true).append(true).read(true).open("logger.txt").await.unwrap();
-                                let _ = file.write(Utc::now().date().to_string().as_bytes()).await;
+                                let _ = file.write(Utc::now().to_string().as_bytes()).await;
                                 let _ = file.write(b" ").await;
                                 let _ = file.write(&whole_body).await;
                                 let _ = file.write(b"\n").await;

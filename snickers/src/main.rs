@@ -46,7 +46,8 @@ async fn main() {
     let listener = TcpListener::bind(format!("{}:{}", hostname, port))
         .await
         .unwrap();
-    let mars = Arc::new(Mutex::new(Mars::new()));
+    let log = SkittlesClient::new(args.name, args.log_ip, args.log);
+    let mars = Arc::new(Mutex::new(Mars::new(log.clone())));
     let db = Arc::new(RwLock::new(Database::new()));
 
     if master_ip.is_some() && !is_master {
@@ -131,7 +132,6 @@ async fn main() {
         });
     }
 
-    let log = SkittlesClient::new(args.name, args.log_ip, args.log);
     loop {
         let (mut socket, _addr) = listener.accept().await.unwrap();
 

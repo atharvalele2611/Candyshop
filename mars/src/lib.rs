@@ -5,17 +5,23 @@ use std::sync::Arc;
 use tokio::net::TcpStream;
 use tokio::sync::{mpsc, Mutex};
 
+use skittles::SkittlesClient;
+
 type Message = Vec<u8>;
 type Tx = mpsc::UnboundedSender<(String, Message)>;
 
 /// Pub/Sub
-pub struct Mars(Arc<Mutex<HashMap<String, Vec<(Tx, SocketAddr)>>>>);
+pub struct Mars(
+    Arc<Mutex<HashMap<String, Vec<(Tx, SocketAddr)>>>>,
+    SkittlesClient,
+);
 
 impl Mars {
     /// Constructor
-    pub fn new() -> Self {
+    pub fn new(s: SkittlesClient) -> Self {
         Self {
             0: Arc::new(Mutex::new(HashMap::new())),
+            1: s,
         }
     }
 
@@ -94,6 +100,7 @@ impl Mars {
         for topic in topics {
             guard.insert(topic, vec![]);
         }
+        self.1.log(format!("Added topics: {}", s).as_str()).await;
     }
 
     /// Drop topics(comma separated)
@@ -104,6 +111,8 @@ impl Mars {
         for topic in topics {
             guard.remove(&topic);
         }
+
+        self.1.log(format!("Dropped topics: {}", s).as_str()).await;
     }
 
     /// Send a message to everyone listening on a particular topic(single topic)
@@ -113,6 +122,9 @@ impl Mars {
                 for (tx, _) in vt {
                     let _ = tx.send((s.to_string(), msg.to_vec()));
                 }
+                self.1
+                    .log(format!("Sent notification for topic: {}", s).as_str())
+                    .await;
             }
             None => (),
         }

@@ -48,20 +48,17 @@ async fn main() -> std::io::Result<()> {
 
     let log = SkittlesClient::new(args.name, args.log_ip, args.log);
 
-    let mut mars = Mars::new();
+    let mut mars = Mars::new(log.clone());
     mars.add_topic("ram,memory,network").await;
-    let mars = Arc::new(Mutex::new(Mars::new()));
+    let mars = Arc::new(Mutex::new(mars));
 
     let mars_sys = Arc::clone(&mars);
-    let sys_log = log.clone();
 
     let system = tokio::spawn(async move {
         use tokio::net::TcpListener;
 
         let listener = TcpListener::bind(format!("127.0.0.1:{}", args.port)).await
                                     .expect("Could not start TCP Server");
-
-        sys_log.log(format!("Listening on port {}", args.port).as_str()).await;
 
         loop {
             let (socket, _addr) = listener.accept().await.expect("Error while accepting socket");
