@@ -34,14 +34,14 @@ static COMMANDS: &[SnickersCommand] = &[
         name: "set",
         handler: strings::set_command,
     },
-    // SnickersCommand {
-    //     name: b"mget",
-    //     handler: strings::mget_command,
-    // },
-    // SnickersCommand {
-    //     name: b"mset",
-    //     handler: strings::mset_command,
-    // },
+    SnickersCommand {
+        name: "mget",
+        handler: strings::mget_command,
+    },
+    SnickersCommand {
+        name: "mset",
+        handler: strings::mset_command,
+    },
     // SnickersCommand {
     //     name: b"del",
     //     handler: keyspace::del_command,
