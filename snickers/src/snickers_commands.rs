@@ -4,7 +4,6 @@ use mars::Mars;
 use tokio::sync::{MutexGuard, RwLockWriteGuard};
 
 pub mod hash;
-pub mod keyspace;
 pub mod lists;
 pub mod server;
 pub mod sets;
