@@ -4,7 +4,7 @@ use clap::Parser;
 use std::{net::SocketAddr, sync::Arc};
 use hyper::{Body, Request, Response, Method, StatusCode};
 use hyper::{Server, service::{make_service_fn, service_fn}};
-use tokio::{fs::OpenOptions, io::{AsyncWriteExt, self}, sync::RwLock};
+use tokio::{fs::OpenOptions, io::{AsyncWriteExt, self}, sync::Mutex};
 
 #[derive(Parser, Debug)]
 #[clap(name="Skittles", version = "1.0")]
@@ -18,7 +18,7 @@ async fn main() -> io::Result<()> {
     let arg = Args::parse();
     let addr = SocketAddr::from(([127, 0, 0, 1], arg.port));
 
-    let f = Arc::new(RwLock::new(1));
+    let f = Arc::new(Mutex::new(1));
 
     let make_svc = make_service_fn(move |_conn| {        
         let f = Arc::clone(&f);
@@ -33,7 +33,7 @@ async fn main() -> io::Result<()> {
                             let whole_body = hyper::body::to_bytes(req.into_body()).await?;
 
                             {
-                                let _ = f.write().await;
+                                let _ = f.lock().await;
                                 let mut file = OpenOptions::new().create(true).write(true).append(true).read(true).open("logger.txt").await.unwrap();
                                 let _ = file.write(Utc::now().date().to_string().as_bytes()).await;
                                 let _ = file.write(b" ").await;
@@ -62,7 +62,7 @@ async fn main() -> io::Result<()> {
                             let mut vv = String::new();
                             
                             {
-                                let _ = f.read().await;
+                                let _ = f.lock().await;
                                 let mut d = String::new();
                                 let mut file = OpenOptions::new().create(true).write(true).append(true).read(true).open("logger.txt").await.unwrap();
                                 let _i = file.read_to_string(&mut d).await;
