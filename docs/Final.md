@@ -166,7 +166,8 @@ When either of the matrix cross their limits appropriate pub-sub group is notifi
 
   ## Learnings
 
-  Async closures are not allowed.
+  - Async closures are unstable as of now.
+  - Async test functions are not allowed.
 
   ## Demo
 
