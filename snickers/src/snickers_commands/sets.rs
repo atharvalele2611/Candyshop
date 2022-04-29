@@ -1,8 +1,10 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, sync::Arc};
+
+use tokio::sync::RwLock;
 
 use crate::{database::Database, main};
 
-pub(crate) fn sadd_command(
+pub(crate) async fn sadd_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
@@ -13,14 +15,17 @@ pub(crate) fn sadd_command(
     } else {
         let hash_map = &mut db.get_hs_store();
         if !hash_map.contains_key(database_key) {
-            hash_map.insert(database_key.to_string(), HashSet::<String>::new());
+            hash_map.insert(
+                database_key.to_string(),
+                Arc::new(RwLock::new(HashSet::<String>::new())),
+            );
         }
         let hs_db = hash_map.get_mut(&database_key.to_string()).unwrap();
         let mut flag: i32 = 0;
         for key in request {
             let main_key = key.clone();
-            if !hs_db.contains(main_key) {
-                hs_db.insert(key.to_string());
+            if !hs_db.read().await.contains(main_key) {
+                hs_db.write().await.insert(key.to_string());
                 flag += 1;
             }
         }
@@ -31,7 +36,7 @@ pub(crate) fn sadd_command(
     }
 }
 
-pub(crate) fn srem_command(
+pub(crate) async fn srem_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
@@ -46,7 +51,7 @@ pub(crate) fn srem_command(
         }
         let hs_db = hash_map.get_mut(&database_key.to_string()).unwrap();
         for key in request {
-            hs_db.remove(&key.to_string());
+            hs_db.write().await.remove(&key.to_string());
         }
         let mut response = request.len().to_string();
         response.push('\n');
@@ -54,7 +59,7 @@ pub(crate) fn srem_command(
     }
 }
 
-pub(crate) fn scard_command(
+pub(crate) async fn scard_command(
     db: &mut Database,
     database_key: &str,
     _request: &[&str],
@@ -67,14 +72,14 @@ pub(crate) fn scard_command(
         let mut response = String::new();
         if hs_db_opt.is_some() {
             let hash_set = hs_db_opt.unwrap();
-            response.push_str(&hash_set.len().to_string());
+            response.push_str(&hash_set.read().await.len().to_string());
             response.push('\n');
         }
         return Ok(response);
     }
 }
 
-pub(crate) fn smembers_command(
+pub(crate) async fn smembers_command(
     db: &mut Database,
     database_key: &str,
     _request: &[&str],
@@ -85,7 +90,7 @@ pub(crate) fn smembers_command(
     }
     let hs_db = hash_map.get_mut(&database_key.to_string()).unwrap();
     let mut response = String::new();
-    for key in hs_db.iter() {
+    for key in hs_db.read().await.iter() {
         response.push_str(key);
         response.push('\n');
     }

@@ -1,5 +1,4 @@
 use crate::database::Database;
-type SnickerCommandProc = fn(db: &mut Database, dk: &str, req: &[&str]) -> Result<String, String>;
 
 pub mod hash;
 pub mod keyspace;
@@ -11,179 +10,161 @@ pub mod trie;
 
 pub struct SnickersCommand<'a> {
     pub name: &'a str,
-    pub handler: SnickerCommandProc,
+    // pub handler: SnickerCommandProc,
 }
 
 impl SnickersCommand<'_> {
-    pub fn execute(
+    pub async fn execute(
         &self,
         db: &mut Database,
+        command: &str,
         database_key: &str,
         request: &[&str],
     ) -> Result<String, String> {
-        (self.handler)(db, database_key, request)
+        // bad approach could have been done more dynamically using (self.handler)(db,database_key,request)
+        // but was getting error of type mismatch which was hard to figure out
+        match command {
+            "get" => strings::get_command(db, database_key, request).await,
+            "set" => strings::set_command(db, database_key, request),
+            "mget" => strings::mget_command(db, database_key, request).await,
+            "mset" => strings::mset_command(db, database_key, request),
+            "rpush" => lists::rpush_command(db, database_key, request).await,
+            "lpush" => lists::lpush_command(db, database_key, request).await,
+            "lpop" => lists::lpop_command(db, database_key, request).await,
+            "rpop" => lists::rpop_command(db, database_key, request).await,
+            "llen" => lists::llen_command(db, database_key, request).await,
+            "lindex" => lists::lindex_command(db, database_key, request).await,
+            "lset" => lists::lset_command(db, database_key, request).await,
+            "lrange" => lists::lrange_command(db, database_key, request).await,
+            "ltrim" => lists::ltrim_command(db, database_key, request).await,
+            "hset" => hash::hset_command(db, database_key, request).await,
+            "hget" => hash::hget_command(db, database_key, request).await,
+            "hmset" => hash::hmset_command(db, database_key, request).await,
+            "hmget" => hash::hmget_command(db, database_key, request).await,
+            "hgetall" => hash::hgetall_command(db, database_key, request).await,
+            "tinsert" => trie::tinsert_command(db, database_key, request).await,
+            "tremove" => trie::tremove_command(db, database_key, request).await,
+            "tgetall" => trie::tgetall_command(db, database_key, request).await,
+            "sadd" => sets::sadd_command(db, database_key, request).await,
+            "srem" => sets::srem_command(db, database_key, request).await,
+            "scard" => sets::scard_command(db, database_key, request).await,
+            "smembers" => sets::smembers_command(db, database_key, request).await,
+            "flushdb" => server::flushdb_command(db, database_key, request),
+            _ => {
+                let response = String::from("UNKNOWN COMMAND\n");
+                return Err(response);
+            }
+        }
     }
 }
 
 static COMMANDS: &[SnickersCommand] = &[
     SnickersCommand {
         name: "get",
-        handler: strings::get_command,
+        // handler: strings::get_command,
     },
     SnickersCommand {
         name: "set",
-        handler: strings::set_command,
+        // handler: strings::set_command,
     },
     SnickersCommand {
         name: "mget",
-        handler: strings::mget_command,
+        // handler: strings::mget_command,
     },
     SnickersCommand {
         name: "mset",
-        handler: strings::mset_command,
+        // handler: strings::mset_command,
     },
-    // SnickersCommand {
-    //     name: b"del",
-    //     handler: keyspace::del_command,
-    // },
-    // SnickersCommand {
-    //     name: b"exists",
-    //     handler: keyspace::exists_command,
-    // },
-    // SnickersCommand {
-    //     name: b"expire",
-    //     handler: keyspace::expire_command,
-    // },
-    // SnickersCommand {
-    //     name: b"persist",
-    //     handler: keyspace::persist_command,
-    // },
-    // SnickersCommand {
-    //     name: b"ttl",
-    //     handler: keyspace::ttl_command,
-    // },
-    // SnickersCommand {
-    //     name: b"incr",
-    //     handler: strings::incr_command,
-    // },
-    // SnickersCommand {
-    //     name: b"decr",
-    //     handler: strings::decr_command,
-    // },
-    // SnickersCommand {
-    //     name: b"incrby",
-    //     handler: strings::incrby_command,
-    // },
-    // SnickersCommand {
-    //     name: b"decrby",
-    //     handler: strings::decrby_command,
-    // },
     SnickersCommand {
         name: "rpush",
-        handler: lists::rpush_command,
+        // handler: lists::rpush_command,
     },
     SnickersCommand {
         name: "lpush",
-        handler: lists::lpush_command,
+        // handler: lists::lpush_command,
     },
     SnickersCommand {
         name: "rpop",
-        handler: lists::rpop_command,
+        // handler: lists::rpop_command,
     },
     SnickersCommand {
         name: "lpop",
-        handler: lists::lpop_command,
+        // handler: lists::lpop_command,
     },
     SnickersCommand {
         name: "llen",
-        handler: lists::llen_command,
+        // handler: lists::llen_command,
     },
     SnickersCommand {
         name: "lindex",
-        handler: lists::lindex_command,
+        // handler: lists::lindex_command,
     },
     SnickersCommand {
         name: "lset",
-        handler: lists::lset_command,
+        // handler: lists::lset_command,
     },
     SnickersCommand {
         name: "lrange",
-        handler: lists::lrange_command,
+        // handler: lists::lrange_command,
     },
     SnickersCommand {
         name: "ltrim",
-        handler: lists::ltrim_command,
+        // handler: lists::ltrim_command,
     },
     SnickersCommand {
         name: "hset",
-        handler: hash::hset_command,
+        // handler: hash::hset_command,
     },
     SnickersCommand {
         name: "hget",
-        handler: hash::hget_command,
+        // handler: hash::hget_command,
     },
     SnickersCommand {
         name: "hmset",
-        handler: hash::hmset_command,
+        // handler: hash::hmset_command,
     },
     SnickersCommand {
         name: "hmget",
-        handler: hash::hmget_command,
+        // handler: hash::hmget_command,
     },
     SnickersCommand {
         name: "hgetall",
-        handler: hash::hgetall_command,
+        // handler: hash::hgetall_command,
     },
     SnickersCommand {
         name: "tinsert",
-        handler: trie::tinsert_command,
+        // handler: trie::tinsert_command,
     },
     SnickersCommand {
         name: "tremove",
-        handler: trie::tremove_command,
+        // handler: trie::tremove_command,
     },
     SnickersCommand {
         name: "tgetall",
-        handler: trie::tgetall_command,
+        // handler: trie::tgetall_command,
     },
     SnickersCommand {
         name: "sadd",
-        handler: sets::sadd_command,
+        // handler: sets::sadd_command,
     },
     SnickersCommand {
         name: "srem",
-        handler: sets::srem_command,
+        // handler: sets::srem_command,
     },
     SnickersCommand {
         name: "scard",
-        handler: sets::scard_command,
+        // handler: sets::scard_command,
     },
     SnickersCommand {
         name: "smembers",
-        handler: sets::smembers_command,
+        // handler: sets::smembers_command,
     },
-    // SnickersCommand {
-    //     name: b"command",
-    //     handler: server::command_command,
-    // },
-    // SnickersCommand {
-    //     name: b"debug",
-    //     handler: server::debug_command,
-    // },
     SnickersCommand {
         name: "flushdb",
-        handler: server::flushdb_command,
+        // handler: server::flushdb_command,
     },
-    // SnickersCommand {
-    //     name: b"type",
-    //     handler: keyspace::type_command,
-    // },
-    // SnickersCommand {
-    //     name: b"object",
-    //     handler: keyspace::object_command,
-    // },
 ];
 
-pub fn lookup(name: &str) -> Option<&SnickersCommand> {
+pub async fn lookup(name: &str) -> Option<&SnickersCommand<'_>> {
     COMMANDS.iter().find(|c| name.eq_ignore_ascii_case(c.name))
 }

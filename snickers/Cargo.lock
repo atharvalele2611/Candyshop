@@ -325,6 +325,7 @@ dependencies = [
  "clap",
  "serde",
  "tokio",
+ "trie",
 ]
 
 [[package]]
@@ -398,6 +399,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "trie"
+version = "0.1.0"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

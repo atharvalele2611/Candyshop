@@ -1,10 +1,10 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, sync::Arc};
+
+use tokio::sync::RwLock;
 
 use crate::database::Database;
-// pub struct HashMapExecutionError;
-// type Err = HashMapExecutionError;
 
-fn hset_command_1(
+async fn hset_command_1(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
@@ -16,14 +16,17 @@ fn hset_command_1(
     } else {
         let hash_map = &mut db.get_hm_store();
         if !hash_map.contains_key(database_key) {
-            hash_map.insert(database_key.to_string(), HashMap::<String, String>::new());
+            hash_map.insert(
+                database_key.to_string(),
+                Arc::new(RwLock::new(HashMap::<String, String>::new())),
+            );
         }
         let mut key_idx = 0 as usize;
         let hm_db = hash_map.get_mut(&database_key.to_string()).unwrap();
         while key_idx < request.len() - 1 {
             let key = request[key_idx];
             let val = request[key_idx + 1];
-            hm_db.insert(key.to_string(), val.to_string());
+            hm_db.write().await.insert(key.to_string(), val.to_string());
             key_idx = key_idx + 2;
         }
         if with_count {
@@ -35,43 +38,42 @@ fn hset_command_1(
     }
 }
 
-pub(crate) fn hset_command(
+pub(crate) async fn hset_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
-    hset_command_1(db, database_key, request, true)
+    hset_command_1(db, database_key, request, true).await
 }
 
-pub(crate) fn hmset_command(
+pub(crate) async fn hmset_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
-    hset_command_1(db, database_key, request, false)
+    hset_command_1(db, database_key, request, false).await
 }
 
-pub(crate) fn hget_command(
+pub(crate) async fn hget_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
     if request.is_empty() || request.len() != 1 {
-        // return Err(HashMapExecutionError);
         return Err("ERR wrong number of arguments for command\n".to_string());
     } else {
         let hash_map = &mut db.get_hm_store();
 
         if !hash_map.contains_key(database_key) {
             return Err("(nil)\n".to_string());
-            // return Err(HashMapExecutionError);
         } else {
             let hm_db = hash_map.get_mut(&database_key.to_string());
             match hm_db {
                 Some(hm_db) => {
                     let mut response = String::new();
                     for key in request {
-                        match hm_db.get_mut(&key.to_string()) {
+                        let mut r = hm_db.write().await;
+                        match r.get_mut(&key.to_string()) {
                             Some(val) => {
                                 val.push('\n');
                                 response.push_str(val);
@@ -89,33 +91,34 @@ pub(crate) fn hget_command(
     }
 }
 
-pub(crate) fn hmget_command(
+pub(crate) async fn hmget_command(
     db: &mut Database,
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
     if request.is_empty() || request.len() % 2 != 0 {
-        // return Err(HashMapExecutionError);
         return Err("Error\n".to_string());
     } else {
-        let hash_map = &mut db.get_hm_store();
-        // println!("{:?}", hash_map);
+        let hash_map = db.get_hm_store();
         if !hash_map.contains_key(database_key) {
             return Err("(nil)\n".to_string());
-            // return Err(HashMapExecutionError);
         } else {
-            let hm_db_opt = hash_map.get_mut(&database_key.to_string());
+            let hm_db_opt = hash_map.get(&database_key.to_string());
             let mut response = String::new();
             if hm_db_opt.is_some() {
                 let hm_db = hm_db_opt.unwrap();
-                for key in request {
-                    match hm_db.get_mut(&key.to_string()) {
-                        Some(val) => {
-                            val.push('\n');
-                            response.push_str(val);
-                        }
-                        None => {
-                            response.push_str("(nil)\n");
+                {
+                    let guard = hm_db.read().await;
+                    for key in request {
+                        let key = key.to_string();
+                        match guard.get(&key.to_string()) {
+                            Some(val) => {
+                                response.push_str(val);
+                                response.push('\n');
+                            }
+                            None => {
+                                response.push_str("(nil)\n");
+                            }
                         }
                     }
                 }
@@ -125,7 +128,7 @@ pub(crate) fn hmget_command(
     }
 }
 
-pub(crate) fn hgetall_command(
+pub(crate) async fn hgetall_command(
     db: &mut Database,
     database_key: &str,
     _request: &[&str],
@@ -133,19 +136,22 @@ pub(crate) fn hgetall_command(
     let hash_map = &mut db.get_hm_store();
     if !hash_map.contains_key(database_key) {
         return Err("Error\n".to_string());
-        // return Err(HashMapExecutionError);
     } else {
         let hm_db_opt = hash_map.get_mut(&database_key.to_string());
         let mut response = String::new();
         if hm_db_opt.is_some() {
             let hm_db = hm_db_opt.unwrap();
 
-            for (key, v) in hm_db {
-                let mut k = key.to_string();
-                k.push('\n');
-                response.push_str(&k);
-                v.push('\n');
-                response.push_str(v);
+            {
+                let h = hm_db.read().await;
+                for (key, v) in h.iter() {
+                    let mut k = key.to_string();
+                    k.push('\n');
+                    response.push_str(&k);
+                    let mut v = v.to_string();
+                    v.push('\n');
+                    response.push_str(&v);
+                }
             }
         }
         Ok(response.to_string())
