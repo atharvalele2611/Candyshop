@@ -1,39 +1,71 @@
+use crate::database::Database;
 use std::fs;
 
 #[cfg(test)]
 mod tests {
+
+    use crate::snickers_commands::hash::hget_command;
+    use crate::snickers_commands::hash::hset_command;
+    use crate::snickers_commands::strings::mget_command;
+    use crate::snickers_commands::strings::mset_command;
+
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
 
     #[test]
-    fn test_string_get_and_set() {
-        let line = String::new("mset 1 2 3 4"); //key = 1, val =2 ; key = 3, val =4
-        let mut input = Vec::<&str>::new();
-        for arg in line.split_ascii_whitespace() {
-            input.push(arg);
+
+    fn test_string_set_get() {
+        //"mset A a B b"
+
+        // let mut
+        let mut db: Database = Database::new();
+        let res = mset_command(&mut db, "A", &vec!["a", "B", "b"]);
+        let mut r = "";
+        if res.is_ok() {
+            r = "Ok";
+        } else {
+            r = "Err";
         }
-        if !input.is_empty() && input.len() >= 2 {
-            let command = input[0];
-            let database_key = input[1];
-            let values = &input[2..];
-            let cmd = snickers_commands::lookup(command);
-            match cmd {
-                Some(cmd) => {
-                    let res = cmd.execute(&mut db, database_key, values);
-                    assert_eq!(cmd.execute(&mut db, database_key, values), "Ok");
-                }
-                None => {
-                    let response = String::from("UNKNOWN COMMAND\n");
-                    assert_eq!("UNKNOWN COMMAND\n", "UNKNOWN COMMAND\n");
-                }
-            }
+
+        assert_eq!(r, "Ok");
+
+        let res = mget_command(&mut db, "A", &vec![]);
+        if res.is_ok() {
+            assert_eq!(res.unwrap(), "a\n");
+        } else {
+            assert_eq!(res.unwrap_err(), "a\n");
         }
     }
 
     #[test]
-    fn test_bad_add() {
-        // This assert would fire and test will fail.
-        // Please note, that private functions can be tested too!
-        assert_eq!(bad_add(1, 2), 3);
+    fn test_hash_hset_hget() {
+        //"mset A a B b"
+        // HSET myhash field1 "Hello"
+        // let mut
+        let mut db: Database = Database::new();
+        let res = hset_command(&mut db, "myhash", &vec!["field1", "Hello"]);
+        let mut r = "";
+        if res.is_ok() {
+            r = "";
+        } else {
+            r = "Err";
+        }
+
+        let res = hget_command(&mut db, "myhash", &vec!["field1"]);
+        if res.is_ok() {
+            assert_eq!(res.unwrap(), "Hello\n");
+        } else {
+            assert_eq!(
+                res.unwrap_err(),
+                "ERR wrong number of arguments for command\n"
+            );
+        }
     }
+
+    // #[test]
+    // fn test_bad_add() {
+    //     // This assert would fire and test will fail.
+    //     // Please note, that private functions can be tested too!
+    //     assert_eq!(bad_add(1, 2), 3);
+    // }
 }

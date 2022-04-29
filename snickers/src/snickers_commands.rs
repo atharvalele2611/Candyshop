@@ -1,13 +1,13 @@
 use crate::database::Database;
 type SnickerCommandProc = fn(db: &mut Database, dk: &str, req: &[&str]) -> Result<String, String>;
 
-mod hash;
-mod keyspace;
-mod lists;
-mod server;
-mod sets;
-mod strings;
-mod trie;
+pub mod hash;
+pub mod keyspace;
+pub mod lists;
+pub mod server;
+pub mod sets;
+pub mod strings;
+pub mod trie;
 
 pub struct SnickersCommand<'a> {
     pub name: &'a str,
