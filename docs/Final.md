@@ -144,7 +144,7 @@ When either of the matrix cross their limits appropriate pub-sub group is notifi
 
 ## `Mars`
 
-Classic Pub/Sub implementation. Add topics and Subscribe to these topics with just a TcpStream.
+Classic Pub/Sub implementation. Add topics -> Clients subscribe -> Receive Messages
 
 ## `Additional Details`
 
