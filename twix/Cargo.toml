@@ -8,6 +8,9 @@ edition = "2021"
 [dependencies.mars]
 path = "../mars"
 
+[dependencies.skittles]
+path = "../skittles"
+
 [dependencies]
 sysinfo = "0.23"
 clap = { version = "3.1.6", features = ["derive"] }
