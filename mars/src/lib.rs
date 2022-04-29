@@ -59,9 +59,6 @@ impl Mars {
                 }
             }
         });
-        // // .await;
-
-        // self.drop_subscriber(t, addr).await;
     }
 
     /// Drop a subscriber from given topics
