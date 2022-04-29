@@ -6,26 +6,12 @@ fn str_split_first(s: &str) -> Option<(char, &str)> {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TrieMap<V> {
-    /// The total number of string/value pairs represented by the `TrieMap`,
-    /// including this node and all descendant nodes.
-    ///
-    /// Note that this is *not* the total number of `TrieMap` nodes; rather, it
-    /// is the toal number of `TrieMap` nodes that have a `Some` `val` field.
     len: usize,
-    /// The value, if any, at this node of the `TrieMap`; the corresponding
-    /// string is implicit, determined by the sequence of characters from the
-    /// root `TrieMap` to this node.
     val: Option<V>,
-    /// The children tries, as a mapping from a character to a `TrieMap`, stored
-    /// in lexicographic (i.e., dictionary) order by characters; thus, it is
-    /// possible to binary search the children tries by the character.
-    ///
-    /// As an invariant of the `TrieMap`, no child trie should be empty.
     children: Vec<(char, TrieMap<V>)>,
 }
 
 impl<V> TrieMap<V> {
-    /// Creates an empty `TrieMap`.
     pub fn new() -> Self {
         TrieMap {
             len: 0,
@@ -130,13 +116,6 @@ pub struct IntoIter<V> {
 impl<V> IntoIterator for TrieMap<V> {
     type Item = (String, V);
     type IntoIter = IntoIter<V>;
-    /// Creates a consuming iterator, that is, one that moves each string/value
-    /// pair out of the map in lexicographic (i.e., dictionary) order. The map
-    /// cannot be used after calling this.
-    ///
-    /// The iterator `Item` type is `(String, V)`.
-    ///
-    /// This method must be *O*(*1*).
     fn into_iter(self: TrieMap<V>) -> Self::IntoIter {
         let len = self.len;
         let stk = vec![(String::new(), self)];
@@ -201,6 +180,48 @@ impl<'a, V> Iterator for IterMut<'a, V> {
                         (s, tm)
                     }));
                     match tm.val.as_mut() {
+                        None => (),
+                        Some(v) => {
+                            self.len -= 1;
+                            return Some((s, v));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.len, Some(self.len))
+    }
+}
+
+pub struct Iter<'a, V> {
+    len: usize,
+    stk: Vec<(String, &'a TrieMap<V>)>,
+}
+impl<V> TrieMap<V> {
+    pub fn iter(&self) -> Iter<V> {
+        let len = self.len;
+        let stk = vec![(String::new(), self)];
+        Iter { len, stk }
+    }
+}
+
+impl<'a, V> Iterator for Iter<'a, V> {
+    type Item = (String, &'a V);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            match self.stk.pop() {
+                None => return None,
+                Some((s, tm)) => {
+                    self.stk.extend(tm.children.iter().rev().map(|(c, tm)| {
+                        let mut s = s.clone();
+                        s.push(*c);
+                        (s, tm)
+                    }));
+                    match tm.val.as_ref() {
                         None => (),
                         Some(v) => {
                             self.len -= 1;

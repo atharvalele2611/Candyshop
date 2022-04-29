@@ -1,15 +1,16 @@
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::{
+    collections::{HashMap, HashSet, VecDeque},
+    sync::Arc,
+};
 
-use self::trie::TrieMap;
+use tokio::sync::RwLock;
 
-pub mod trie;
-#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Database {
-    store_hm: HashMap<String, HashMap<String, String>>,
-    store_hs: HashMap<String, HashSet<String>>,
-    store_ls: HashMap<String, VecDeque<String>>,
-    store_str: HashMap<String, String>,
-    store_t: HashMap<String, TrieMap<String>>,
+    store_hm: HashMap<String, Arc<RwLock<HashMap<String, String>>>>,
+    store_hs: HashMap<String, Arc<RwLock<HashSet<String>>>>,
+    store_ls: HashMap<String, Arc<RwLock<VecDeque<String>>>>,
+    store_str: HashMap<String, Arc<RwLock<String>>>,
+    store_t: HashMap<String, Arc<RwLock<trie::TrieMap<String>>>>,
 }
 
 impl Database {
@@ -23,23 +24,23 @@ impl Database {
         }
     }
 
-    pub fn get_hm_store(&mut self) -> &mut HashMap<String, HashMap<String, String>> {
+    pub fn get_hm_store(&mut self) -> &mut HashMap<String, Arc<RwLock<HashMap<String, String>>>> {
         &mut self.store_hm
     }
 
-    pub fn get_hs_store(&mut self) -> &mut HashMap<String, HashSet<String>> {
+    pub fn get_hs_store(&mut self) -> &mut HashMap<String, Arc<RwLock<HashSet<String>>>> {
         &mut self.store_hs
     }
 
-    pub fn get_ls_store(&mut self) -> &mut HashMap<String, VecDeque<String>> {
+    pub fn get_ls_store(&mut self) -> &mut HashMap<String, Arc<RwLock<VecDeque<String>>>> {
         &mut self.store_ls
     }
 
-    pub fn get_str_store(&mut self) -> &mut HashMap<String, String> {
+    pub fn get_str_store(&mut self) -> &mut HashMap<String, Arc<RwLock<String>>> {
         &mut self.store_str
     }
 
-    pub fn get_trie_store(&mut self) -> &mut HashMap<String, TrieMap<String>> {
+    pub fn get_trie_store(&mut self) -> &mut HashMap<String, Arc<RwLock<trie::TrieMap<String>>>> {
         &mut self.store_t
     }
 

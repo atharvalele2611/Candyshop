@@ -1,32 +1,25 @@
 pub mod database;
 pub mod snickers_commands;
 
-use std::sync::Arc;
-
 use clap::Parser;
 use tokio::{
     io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
     net::TcpListener,
-    sync::{Mutex, RwLock},
 };
 
 use crate::database::Database;
 
-// use skittles::{self, log};
 #[derive(Parser, Debug)]
 #[clap(name = "Snickers", version = "1.0")]
 struct Args {
     #[clap(long, default_value_t = 8080)]
     port: i32,
-
-    #[clap(short, default_value = "localhost")]
-    hostname: String,
 }
 
 #[tokio::main]
 async fn main() {
     let args = Args::parse();
-    let hostname = args.hostname;
+    let hostname = "localhost";
     let port = args.port.to_string();
     let listener = TcpListener::bind(format!("{}:{}", hostname, port))
         .await
@@ -36,13 +29,14 @@ async fn main() {
     // to allow multiple clients conncet to server
     loop {
         let (mut socket, _addr) = listener.accept().await.unwrap();
-        // let socket1 = Arc::new(RwLock::new(socket));
+        // let socket1 = Arc::new(Mutex::new(socket));
         // let sc = Arc::clone(&socket1);
         // tokio::spawn(log(sc));
         let mut db = Database::new();
 
         tokio::spawn(async move {
-            // let mut socket1 = socket1.write().await;
+            // let socket1 = Arc::clone(&socket1);
+            // let mut socket1 = socket1.lock().await;
             let (read, mut writer) = socket.split();
             let mut reader = BufReader::new(read);
             loop {
@@ -59,10 +53,10 @@ async fn main() {
                     let command = input[0];
                     let database_key = input[1];
                     let values = &input[2..];
-                    let cmd = snickers_commands::lookup(command);
+                    let cmd = snickers_commands::lookup(command).await;
                     match cmd {
                         Some(cmd) => {
-                            let res = cmd.execute(&mut db, database_key, values);
+                            let res = cmd.execute(&mut db, command, database_key, values).await;
 
                             if res.is_ok() {
                                 writer.write_all(res.unwrap().as_bytes()).await.unwrap();
