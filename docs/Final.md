@@ -163,3 +163,11 @@ When either of the matrix cross their limits appropriate pub-sub group is notifi
   example of idiomatic Rust?
 - Describe any approaches attempted and then abandoned and the reasons why. What
   did you learn by undertaking this project?
+
+  ## Learnings
+
+  Async closures are not allowed.
+
+  ## Demo
+
+  ![image info](/Images/demo.jpeg)

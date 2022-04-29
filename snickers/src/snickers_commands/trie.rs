@@ -1,4 +1,4 @@
-use std::{os::unix::prelude::MetadataExt, sync::Arc};
+use std::sync::Arc;
 
 use tokio::sync::RwLock;
 
