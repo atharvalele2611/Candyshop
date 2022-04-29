@@ -92,7 +92,7 @@ Some examples are given below for better understanding:-
 
 5. Trie
 
-Commands executed:
+Commands Implemented:
 
 - tinsert
 - tremove
@@ -152,27 +152,58 @@ Classic Pub/Sub implementation. Add topics -> Clients subscribe -> Receive Messa
   module dependency structure). Why was the project modularized in this way?
 
   We have divided various different components into crates.
-  main Components are:
-  -Snickers, Twix, Mars, Skittles.
-  The module dependency structure is as shown below:-
+  
+  Project Structure:
 
   ![image info](/Images/Components.jpeg)
 
-  We modularized the project in this way because all of the components are supposed to work indpendent of each other as all of them have inherently different functions.
+  We modularized the project in such a way because all of the components work in an independent fashion but do rely on each others and hence easier to reuse code.
 
-- Choose (at least) one code excerpt that is a particularly good example of Rust
-  features, idioms, and/or style and describe what makes it “Rusty”.
-- Were any parts of the code particularly difficult to express using Rust? What
-  are the challenges in refining and/or refactoring this code to be a better
-  example of idiomatic Rust?
-- Describe any approaches attempted and then abandoned and the reasons why. What
-  did you learn by undertaking this project?
+## The Goods of Rust  
 
-  ## Learnings
+  Locks!
+
+  Initially:
+  ```rs
+  let resource1_clone = Arc::clone(resource1_arc);
+  // ...
+
+  {
+    let guard = resource1_clone.lock().await;
+    // ...
+  }
+  ```
+
+  Later:
+  ```rs
+  let resource1_clone = Arc::clone(resource1_arc);
+  // ...
+  let resourcen_clone = Arc::clone(resourcen_arc);
+
+  let h1 = tokio::spawn(async move {
+    let guard = resource1_clone.lock().await;
+    // ...
+  });
+
+  // ...
+
+  let hn = tokio::spawn(async move {
+    let guard = resourcen_clone.lock().await;
+    // ...
+  });
+
+  // ...
+  ```
+  
+- 🏳
+  1. Benchmarks!
+  2. Async Unit Tests
+
+## Learnings
 
   - Async closures are unstable as of now.
   - Async test functions are not allowed.
 
-  ## Demo
+## Demo
 
   ![image info](/Images/demo.jpeg)
