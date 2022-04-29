@@ -1,4 +1,4 @@
-use std::{os::unix::prelude::MetadataExt, sync::Arc};
+use std::sync::Arc;
 
 use tokio::sync::RwLock;
 
@@ -10,7 +10,6 @@ pub(crate) async fn tinsert_command(
     request: &[&str],
 ) -> Result<String, String> {
     if request.is_empty() || request.len() % 2 != 0 {
-        println!("{}", request.len());
         return Err("Error\n".to_string());
     } else {
         let hash_map = db.get_trie_store();

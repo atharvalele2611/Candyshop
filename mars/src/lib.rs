@@ -1,6 +1,6 @@
+use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
-use std::collections::HashMap;
 
 use tokio::net::TcpStream;
 use tokio::sync::{mpsc, Mutex};
@@ -15,7 +15,7 @@ impl Mars {
     /// Constructor
     pub fn new() -> Self {
         Self {
-            0: Arc::new(Mutex::new(HashMap::new()))
+            0: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 
@@ -25,10 +25,10 @@ impl Mars {
             Ok(s) => s,
             Err(_) => return,
         };
-        
+
         let (tx, mut rx) = mpsc::unbounded_channel::<(String, Message)>();
         let topics = t.split(",");
-        
+
         {
             let mut guard = self.0.lock().await;
 
@@ -37,7 +37,7 @@ impl Mars {
                     Some(v) => {
                         let tn = tx.clone();
                         v.push((tn, addr));
-                    },
+                    }
                     None => {}
                 }
             }
@@ -52,9 +52,10 @@ impl Mars {
                     break;
                 }
             }
-        }).await;
+        });
+        // // .await;
 
-        self.drop_subscriber(t, addr).await;
+        // self.drop_subscriber(t, addr).await;
     }
 
     /// Drop a subscriber from given topics
@@ -77,8 +78,8 @@ impl Mars {
                     }
 
                     vt.swap_remove(i);
-                },
-                _ => ()
+                }
+                _ => (),
             }
         }
 
@@ -112,8 +113,8 @@ impl Mars {
                 for (tx, _) in vt {
                     let _ = tx.send((s.to_string(), msg.to_vec()));
                 }
-            },
-            None => ()
+            }
+            None => (),
         }
     }
 
@@ -130,7 +131,7 @@ impl Mars {
 
         {
             let guard = self.0.lock().await;
-            
+
             for topic in topics {
                 match guard.get(topic) {
                     Some(v) => cnt += v.len(),
@@ -138,7 +139,7 @@ impl Mars {
                 }
             }
         }
-    
+
         cnt
     }
 }

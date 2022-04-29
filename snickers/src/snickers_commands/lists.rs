@@ -200,7 +200,7 @@ pub(crate) async fn lrange_command(
             let end = request[1].to_string().parse::<i32>().unwrap();
             let start = convert(start, vec.read().await.len());
             let end = convert(end, vec.read().await.len());
-            if start > end || end < 0 || start >= vec.read().await.len() {
+            if start > end || start >= vec.read().await.len() {
                 return Err("(nil)\n".to_string());
             }
 

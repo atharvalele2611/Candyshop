@@ -86,29 +86,29 @@ pub async fn mget_command(
 
     rv.extend(r.iter());
 
-    let mut resultantString = String::new();
+    let mut resultant_string = String::new();
     let hash_map = db.get_str_store();
-    println!("rv.len : {:?}", rv.len());
+
     if rv.len() == 0 {
         return Err("NOT VALID SYNTAX".to_string());
     }
     for i in rv {
         if i != "" {
             if !hash_map.contains_key(i) {
-                resultantString.push_str(&"(nil)\n".to_string());
-                return Err(resultantString);
+                resultant_string.push_str(&"(nil)\n".to_string());
+                return Err(resultant_string);
             } else {
                 let s = hash_map.get(i).unwrap().clone();
                 let mut res = String::from("");
                 res.push_str(&s.read().await.to_string());
                 res.push('\n');
                 return Ok(res);
-                // resultantString.push_str(string)&(res + "\n");
+                // resultant_string.push_str(string)&(res + "\n");
             }
         }
     }
 
-    return Ok(resultantString.to_string());
+    return Ok(resultant_string.to_string());
 }
 
 pub async fn get_command(

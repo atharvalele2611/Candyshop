@@ -2,7 +2,7 @@ use std::{collections::HashSet, sync::Arc};
 
 use tokio::sync::RwLock;
 
-use crate::{database::Database, main};
+use crate::database::Database;
 
 pub(crate) async fn sadd_command(
     db: &mut Database,

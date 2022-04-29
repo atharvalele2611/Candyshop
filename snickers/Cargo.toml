@@ -8,7 +8,11 @@ edition = "2021"
 [dependencies.trie]
 path = "../trie"
 
+[dependencies.mars]
+path = "../mars"
+
 [dependencies]
 tokio = {version = "1.17.0", features = ["full"]}
 serde = { version = "1.0", features = ["derive"] }
 clap = { version = "3.1.6", features = ["derive"] }
+skittles = {path = "../skittles"}
