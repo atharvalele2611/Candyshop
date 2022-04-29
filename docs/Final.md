@@ -15,11 +15,11 @@ public and private clouds.
 ## Project Execution Summary
 
 Snickers, twix, Skittles, Mars
-We have completed the four components(candies) of the candyshop.
+We have completed the four components of the candyshop.
 
 ### Snickers
 
-- First being the snickers which is an in-memory database provided by the candyshop.
+- Snickers which is an in-memory database provided by the candyshop.
   We have implemented following data structures:
 
 Some of the commands are also given as follows:
@@ -56,7 +56,7 @@ Commands executed:
 Some examples are given below for better understanding:-
 
 - Input Format : HSET myhash field1 "key"
-- Output Format : 1 //says that 1 entry are entered into the map
+- Output Format : 1 // says that 1 entry is entered into the map
 
 3. Sets
 
@@ -70,7 +70,7 @@ Commands executed:
 Some examples are given below for better understanding:-
 
     - Input Format : SADD myset "Hello"
-    - Output Format : 1 //says that 1 entry are entered into the set
+    - Output Format : 1 //says that 1 entry is entered into the set
     - Input Format : SADD myset "Hello"
     - Output Format : 0 //says that no new entry is entered into the set
 
@@ -90,7 +90,7 @@ Some examples are given below for better understanding:-
     - Input Format : GET key1
     - Output Format : "Hßello" //returns the value of the given key if exists, else returns (nil)
 
-5. Trie (We have added custom data structure(seen in prog04) in snickers data collection)
+5. Trie
 
 Commands executed:
 
@@ -133,6 +133,10 @@ A user can sign up for notifications on either/all of the follwing topics:-
 
 When either of the matrix cross their limits appropriate pub-sub group is notified.
 
+### Mars
+
+Classic Pub/Sub implementation. Add topics and Subscribe to these topics with just a TcpStream.
+
 ## Additional Details
 
 - External crates used in the project:
@@ -158,7 +162,7 @@ When either of the matrix cross their limits appropriate pub-sub group is notifi
 
 - Choose (at least) one code excerpt that is a particularly good example of Rust
   features, idioms, and/or style and describe what makes it “Rusty”.
-- Were any parts of the code particularly difficult to expres using Rust? What
+- Were any parts of the code particularly difficult to express using Rust? What
   are the challenges in refining and/or refactoring this code to be a better
   example of idiomatic Rust?
 - Describe any approaches attempted and then abandoned and the reasons why. What
