@@ -1,4 +1,4 @@
-# Project Title
+# Candyshop
 
 Team members:
 
