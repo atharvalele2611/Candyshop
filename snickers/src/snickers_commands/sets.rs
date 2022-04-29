@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::database::Database;
+use crate::{database::Database, main};
 
 pub(crate) fn sadd_command(
     db: &mut Database,
@@ -16,10 +16,16 @@ pub(crate) fn sadd_command(
             hash_map.insert(database_key.to_string(), HashSet::<String>::new());
         }
         let hs_db = hash_map.get_mut(&database_key.to_string()).unwrap();
+        let mut flag: i32 = 0;
         for key in request {
-            hs_db.insert(key.to_string());
+            let main_key = key.clone();
+            if !hs_db.contains(main_key) {
+                hs_db.insert(key.to_string());
+                flag += 1;
+            }
         }
-        let mut response = request.len().to_string();
+
+        let mut response = flag.to_string();
         response.push('\n');
         return Ok(response);
     }

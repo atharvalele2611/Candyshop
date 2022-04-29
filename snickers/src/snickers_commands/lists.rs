@@ -98,7 +98,7 @@ pub(crate) fn rpush_command(
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
-    if request.is_empty() || request.len() != 1 {
+    if request.is_empty() || request.len() <= 1 {
         return Err("ERR wrong number of arguments for command\n".to_string());
     } else {
         let hash_map = db.get_ls_store();

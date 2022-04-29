@@ -78,6 +78,7 @@ pub fn mget_command(
     database_key: &str,
     request: &[&str],
 ) -> Result<String, String> {
+    println!("here");
     let r = request.to_vec();
     let mut rv = VecDeque::new();
     rv.push_front(database_key);
@@ -88,7 +89,7 @@ pub fn mget_command(
     let mut resultantString = String::new();
     let hash_map = db.get_str_store();
     println!("rv.len : {:?}", rv.len());
-    if (rv.len() == 0) {
+    if rv.len() == 0 {
         return Err("NOT VALID SYNTAX".to_string());
     }
     for i in rv {
