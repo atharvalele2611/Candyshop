@@ -6,25 +6,25 @@ Team members:
 - Atharva Lele(al8523)
 - Vaidehi Kalra(vk5548)
 
-## Summary Description
+# Summary Description
 
 Candyshop provides various common infrastructure components and APIs to access
 these components. Candyshop can be deployed as infrastructure-as-a-service on
 public and private clouds.
 
-## Project Execution Summary
+# Project Execution Summary
 
 Snickers, twix, Skittles, Mars
 We have completed the four components of the candyshop.
 
-### Snickers
+## `Snickers`
 
 - Snickers which is an in-memory database provided by the candyshop.
   We have implemented following data structures:
 
 Some of the commands are also given as follows:
 
-1. Lists
+`1. Lists`
 
 Commands executed:
 
@@ -43,7 +43,7 @@ Some examples are given below for better understanding:-
     - Input Format : RPUSH mylist "one" "two" "three" "four" "five"
     - Output Format : 5 //says that 5 entries are entered into the list
 
-2. Hash
+`2. Hash`
 
 Commands executed:
 
@@ -58,7 +58,7 @@ Some examples are given below for better understanding:-
 - Input Format : HSET myhash field1 "key"
 - Output Format : 1 // says that 1 entry is entered into the map
 
-3. Sets
+`3. Sets`
 
 Commands executed:
 
@@ -74,7 +74,7 @@ Some examples are given below for better understanding:-
     - Input Format : SADD myset "Hello"
     - Output Format : 0 //says that no new entry is entered into the set
 
-4. Strings
+`4. Strings`
 
 Commands executed:
 
@@ -88,9 +88,9 @@ Some examples are given below for better understanding:-
     - Input Format : MSET key1 "Hello" key2 "World"
     - Output Format : "OK"// implies that values of the said fileds are set
     - Input Format : GET key1
-    - Output Format : "Hßello" //returns the value of the given key if exists, else returns (nil)
+    - Output Format : "Hello" //returns the value of the given key if exists, else returns (nil)
 
-5. Trie
+`5. Trie`
 
 Commands executed:
 
@@ -100,15 +100,24 @@ Commands executed:
 
 Some examples are given below for better understanding:-
 
-    - Input Format : tinsert fruits Mango Sweet Lime Sour
-    - Output Format : "2"// implies that 2 key-value pair are entered into set
-    - Input Format : tgetall fruits
-    - Output Format : Lime\n
-      Sour\n
-      Mango\n
-      Sweet\n //returns all the key-value pairs
+      - Input Format : tinsert fruits Mango Sweet Lime Sour
+      - Output Format : "2"// implies that 2 key-value pair are entered into set
+      - Input Format : tgetall fruits
+      - Output Format :
+        Lime  // key
+        Sour  // value
+        Mango
+        Sweet
 
-### Skittles
+`6. Server`
+
+Command executed:
+
+- flushdb
+
+Flushs/Removes all the keys in our database.
+
+## `Skittles`
 
 Bare Minimum http server with 2 end-points :
 
@@ -120,7 +129,7 @@ Bare Minimum http server with 2 end-points :
 - Skittles Client
   1.  It is utility-wrapper for the service
 
-### Twix
+## `Twix`
 
 It is 2 asynchronous tasks runnning on a single-threaded tokio runtime.
 The first task serves TCP requests while second task performs syscalls every INTERVAL seconds. Since this service is light on computations, we swap between the 2 tasks in a single-threaded runtime.
@@ -133,11 +142,11 @@ A user can sign up for notifications on either/all of the follwing topics:-
 
 When either of the matrix cross their limits appropriate pub-sub group is notified.
 
-### Mars
+## `Mars`
 
 Classic Pub/Sub implementation. Add topics and Subscribe to these topics with just a TcpStream.
 
-## Additional Details
+## `Additional Details`
 
 - External crates used in the project:
 
@@ -168,11 +177,11 @@ Classic Pub/Sub implementation. Add topics and Subscribe to these topics with ju
 - Describe any approaches attempted and then abandoned and the reasons why. What
   did you learn by undertaking this project?
 
-  ## Learnings
+  ## `Learnings`
 
   - Async closures are unstable as of now.
   - Async test functions are not allowed.
 
-  ## Demo
+  ## `Demo`
 
   ![image info](/Images/demo.jpeg)
