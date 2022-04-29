@@ -1,21 +1,21 @@
 mod rules;
 
-use std::sync::Arc;
 use std::io::{self, Error, ErrorKind};
+use std::sync::Arc;
 
 use std::time::Duration;
 
+use clap::Parser;
 use mars::Mars;
 use skittles::SkittlesClient;
-use clap::Parser;
-use sysinfo::{System, SystemExt, NetworkExt};
+use sysinfo::{NetworkExt, System, SystemExt};
 use tokio::net::TcpStream;
 use tokio::sync::{Mutex, MutexGuard};
 
 use crate::rules::Rules;
 
 #[derive(Parser, Debug)]
-#[clap(name="Twix", version = "1.0")]
+#[clap(name = "Twix", version = "1.0")]
 struct Args {
     #[clap(long, default_value = "TWIX-1")]
     name: String,
@@ -39,7 +39,7 @@ struct Args {
     log: bool,
 
     #[clap(long)]
-    log_ip: String
+    log_ip: String,
 }
 
 #[tokio::main(flavor = "current_thread")] // single threaded
@@ -57,15 +57,19 @@ async fn main() -> std::io::Result<()> {
     let system = tokio::spawn(async move {
         use tokio::net::TcpListener;
 
-        let listener = TcpListener::bind(format!("127.0.0.1:{}", args.port)).await
-                                    .expect("Could not start TCP Server");
+        let listener = TcpListener::bind(format!("127.0.0.1:{}", args.port))
+            .await
+            .expect("Could not start TCP Server");
 
         loop {
-            let (socket, _addr) = listener.accept().await.expect("Error while accepting socket");
+            let (socket, _addr) = listener
+                .accept()
+                .await
+                .expect("Error while accepting socket");
             {
                 let guard = mars_sys.lock().await;
 
-                let _ = process(guard, socket).await;    
+                let _ = process(guard, socket).await;
             }
         }
     });
@@ -82,7 +86,10 @@ async fn main() -> std::io::Result<()> {
 
             let ram = s.available_memory();
             let mut network = 0;
-            let _ = s.networks().into_iter().map(|f| network += f.1.transmitted());
+            let _ = s
+                .networks()
+                .into_iter()
+                .map(|f| network += f.1.transmitted());
 
             let (b1, b2, b3) = r.check(0.0, ram as f32, network as usize);
 
@@ -123,7 +130,7 @@ async fn process(mut mars: MutexGuard<'_, Mars>, s: TcpStream) -> io::Result<()>
     match String::from_utf8(buffer[0..n].to_vec()) {
         Ok(string) => {
             mars.add_subscriber(s, &string).await;
-        },
+        }
         Err(_e) => return io::Result::Err(Error::new(ErrorKind::InvalidData, "Invalid Data")),
     }
 
